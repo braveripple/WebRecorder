@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+  </head>
+  <body>
+  <div id="app">
+    <h1>{{title}}</h1>
+    <div>{{userId}}</div>
+    <div class="time">{{dateYMD}} {{dateTime}}</div>
+    <div class="workTime">
+      <div class="workTime">
+        <div class="workTime">
+          開始時刻
+        </div>
+        <div class="workTime">
+          {{workStartTime}}
+        </div>
+      </div>
+      <div class="workTime">
+        <div class="workTime">
+          終了時刻
+        </div>
+        <div class="workTime">
+          {{workEndTime}}
+        </div>
+      </div>
+    </div>
+    <button @click="cancelRecord">取消</button>
+  </div>
+    <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
+  </body>
+</html>
