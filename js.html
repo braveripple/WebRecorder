@@ -1,0 +1,77 @@
+<script src='https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ja.js'></script>
+<script>
+
+// 位置情報の取得
+if( navigator.geolocation ) {
+
+  function successFunc(position) {
+    var locationData = { latitude : position.coords.latitude, longitude: position.coords.longitude };
+    callScript(locationData);
+  };
+
+  function errorFunc(error) {
+    var locationData = { latitude : "", longitude : "" };
+    callScript(locationData);
+  };
+  
+  navigator.geolocation.getCurrentPosition(successFunc,errorFunc);
+
+} else {
+
+  var locationData = { latitude : "", longitude : "" };
+  callScript(locationData);
+};
+
+function callScript(locationData) {
+
+  google.script.run.withSuccessHandler(showVue).getData(locationData);
+
+};
+
+function showVue(data){
+
+  const ret = JSON.parse(data);
+  
+  new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        title: "Web Recorder",
+        userId: ret.userId,
+        date: (function () { return moment() }()),
+        workStartTime: ret.startTime,
+        workEndTime: ret.endTime
+      }
+    },
+    mounted: function () {
+      moment.locale('ja');
+      this.setDate();
+      setInterval(() => {
+        this.setDate()
+      }, 1000);
+    },
+    methods: {
+      setDate: function () {
+        this.date = moment();
+      },
+      cancelRecord: function () {
+        if (confirm("変更を取り消してもよろしいですか？")) {
+          google.script.run.withSuccessHandler(function(){
+            alert("取り消しました");
+          }).doCancelRecord();
+        }
+      }
+    },
+    computed: {
+      dateYMD: function () {
+        return this.date.format('YYYY/MM/DD(ddd)');
+      },
+      dateTime: function () {
+        return this.date.format('HH:mm:ss');
+      }
+    }
+  });
+}
+</script>
